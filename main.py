@@ -1,5 +1,6 @@
 import requests
 from flask import Flask, request
+from feed import filter_feed_by_words
 
 app = Flask(__name__)
 
@@ -7,6 +8,15 @@ app = Flask(__name__)
 @app.route('/')
 def root():
     return 'it works!'
+
+
+@app.route('/filter_feed')
+def filter_feed():
+    url = request.args.get('url')
+    words = request.args.get('words')
+    words = list(filter(bool, words.split(',')))
+    resp = requests.get(url)
+    return filter_feed_by_words(resp.text, words)
 
 
 @app.route('/get_content')
